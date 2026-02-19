@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Tracker - Admin</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fira+Code:wght@400;500;600&display=swap');
+        
+        :root {
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-input: #0d1117;
+            --border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-blue: #58a6ff;
+            --accent-yellow: #d29922;
+            --accent-purple: #bc8cff;
+            --hover: #21262d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fira Code', monospace;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 0;
+        }
+        
+        .admin-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-purple);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 1001;
+            letter-spacing: 1px;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border-bottom: 3px solid var(--border);
+            padding: 30px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.8rem;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 40px 100px 40px;
+        }
+        
+        .sync-status {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .sync-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .controls {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 25px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background: var(--hover);
+            border-color: var(--accent-blue);
+        }
+        
+        .btn-primary {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea043;
+            border-color: #2ea043;
+        }
+        
+        .btn-publish {
+            background: var(--accent-purple);
+            border-color: var(--accent-purple);
+            color: #000;
+            font-weight: 600;
+        }
+        
+        .btn-publish:hover {
+            background: #a371f7;
+            border-color: #a371f7;
+        }
+        
+        .btn-danger {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+        
+        .btn-danger:hover {
+            background: #da3633;
+            border-color: #da3633;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+        
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        thead {
+            background: var(--bg-dark);
+            position: sticky;
+            top: 0;
+        }
+        
+        th {
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        tbody tr {
+            transition: background 0.15s ease;
+        }
+        
+        tbody tr:hover {
+            background: var(--hover);
+        }
+        
+        .stock-symbol {
+            font-weight: 600;
+            color: var(--accent-blue);
+            font-size: 0.95rem;
+        }
+        
+        .exchange-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+        
+        .exchange-badge.BSE {
+            background: rgba(88, 166, 255, 0.2);
+            color: var(--accent-blue);
+        }
+        
+        .exchange-badge.NSE {
+            background: rgba(63, 185, 80, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .positive {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        
+        .negative {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+        
+        .neutral {
+            color: var(--text-secondary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+        
+        .close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        
+        .close:hover {
+            color: var(--accent-red);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        
+        .autocomplete-container {
+            position: relative;
+        }
+        
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .autocomplete-results.active {
+            display: block;
+        }
+        
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .autocomplete-item:hover {
+            background: var(--hover);
+        }
+        
+        .autocomplete-item-symbol {
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+        
+        .autocomplete-item-name {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-left: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+        
+        .metric-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .days-held {
+            background: rgba(210, 153, 34, 0.2);
+            color: var(--accent-yellow);
+        }
+        
+        .info-box {
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .info-box h3 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-box ol {
+            margin-left: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .info-box li {
+            margin-bottom: 8px;
+        }
+        
+        .info-box code {
+            background: var(--bg-dark);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: var(--accent-green);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.75rem;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-badge">ADMIN MODE</div>
+    
+    <div class="header">
+        <div class="header-content">
+            <h1>📊 PORTFOLIO TRACKER</h1>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalTrades">0</div>
+                    <div class="stat-label">Total Trades</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value positive" id="activeTrades">0</div>
+                    <div class="stat-label">Active</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value neutral" id="closedTrades">0</div>
+                    <div class="stat-label">Closed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalPnL">₹0.00</div>
+                    <div class="stat-label">Total P&L</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sync-status">
+            <div class="sync-info">
+                <div class="sync-indicator"></div>
+                <span>Data saves locally • Use PUBLISH to share with subscribers</span>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">Last updated: <span id="lastUpdate">Never</span></span>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="openModal()">+ NEW TRADE</button>
+            <div class="search-box">
+                <input type="text" id="searchTable" placeholder="Search by symbol or company..." oninput="searchTable()">
+            </div>
+            <button class="btn btn-publish" onclick="publishData()">📤 PUBLISH TO SUBSCRIBERS</button>
+            <button class="btn" onclick="exportData()">EXPORT</button>
+            <button class="btn" onclick="importData()">IMPORT</button>
+            <button class="btn btn-danger" onclick="clearAll()">CLEAR ALL</button>
+        </div>
+        
+        <div class="table-container">
+            <table id="tradesTable">
+                <thead>
+                    <tr>
+                        <th>SYMBOL</th>
+                        <th>EXCHANGE</th>
+                        <th>ENTRY PRICE</th>
+                        <th>ENTRY DATE</th>
+                        <th>EXIT PRICE</th>
+                        <th>EXIT DATE</th>
+                        <th>QUANTITY</th>
+                        <th>INVESTMENT</th>
+                        <th>RETURN</th>
+                        <th>P&L</th>
+                        <th>P&L %</th>
+                        <th>DAYS HELD</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="tradesBody">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📈</div>
+            <h2>No trades yet</h2>
+            <p>Click "NEW TRADE" to add your first position</p>
+        </div>
+    </div>
+    
+    <!-- Trade Form Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">ADD NEW TRADE</h2>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="tradeForm" onsubmit="addTrade(event)">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="symbol">Stock Symbol *</label>
+                        <div class="autocomplete-container">
+                            <input type="text" id="symbol" required placeholder="Type to search..." oninput="searchSymbol()" autocomplete="off">
+                            <div class="autocomplete-results" id="autocompleteResults"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exchange">Exchange *</label>
+                        <select id="exchange" required>
+                            <option value="">Select Exchange</option>
+                            <option value="NSE">NSE</option>
+                            <option value="BSE">BSE</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity">Quantity *</label>
+                        <input type="number" id="quantity" required min="1" step="1" placeholder="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entryPrice">Entry Price (₹) *</label>
+                        <input type="number" id="entryPrice" required step="0.01" min="0" placeholder="150.50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="entryDate">Entry Date *</label>
+                        <input type="date" id="entryDate" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exitPrice">Exit Price (₹)</label>
+                        <input type="number" id="exitPrice" step="0.01" min="0" placeholder="175.25">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exitDate">Exit Date</label>
+                        <input type="date" id="exitDate">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="notes">Notes</label>
+                        <input type="text" id="notes" placeholder="Optional notes...">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">SAVE TRADE</button>
+                    <button type="button" class="btn" onclick="closeModal()" style="flex: 1;">CANCEL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Publish Modal -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">PUBLISH DATA</h2>
+                <button class="close" onclick="closePublishModal()">&times;</button>
+            </div>
+            
+            <div class="info-box">
+                <h3>📋 Publishing Instructions</h3>
+                <ol>
+                    <li>Click "GENERATE SUBSCRIBER FILE" below</li>
+                    <li>A file called <code>portfolio-data.js</code> will download</li>
+                    <li>Upload this file to your GitHub repository</li>
+                    <li>Share your GitHub Pages URL with subscribers</li>
+                    <li>They'll see your latest trades automatically!</li>
+                </ol>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    Current data: <strong id="publishTradeCount">0</strong> trades
+                </p>
+                <button class="btn btn-primary" onclick="generatePublishFile()" style="width: 100%;">
+                    GENERATE SUBSCRIBER FILE
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <input type="file" id="importInput" style="display: none;" accept=".json" onchange="handleImport(event)">
+    
+    <script>
+        // Stock database - same as before
+        const STOCK_DATABASE = [
+            { symbol: "RELIANCE", name: "Reliance Industries Ltd", exchange: "NSE" },
+            { symbol: "TCS", name: "Tata Consultancy Services Ltd", exchange: "NSE" },
+            { symbol: "HDFCBANK", name: "HDFC Bank Ltd", exchange: "NSE" },
+            { symbol: "INFY", name: "Infosys Ltd", exchange: "NSE" },
+            { symbol: "ICICIBANK", name: "ICICI Bank Ltd", exchange: "NSE" },
+            { symbol: "HINDUNILVR", name: "Hindustan Unilever Ltd", exchange: "NSE" },
+            { symbol: "ITC", name: "ITC Ltd", exchange: "NSE" },
+            { symbol: "SBIN", name: "State Bank of India", exchange: "NSE" },
+            { symbol: "BHARTIARTL", name: "Bharti Airtel Ltd", exchange: "NSE" },
+            { symbol: "KOTAKBANK", name: "Kotak Mahindra Bank Ltd", exchange: "NSE" },
+            { symbol: "LT", name: "Larsen & Toubro Ltd", exchange: "NSE" },
+            { symbol: "AXISBANK", name: "Axis Bank Ltd", exchange: "NSE" },
+            { symbol: "ASIANPAINT", name: "Asian Paints Ltd", exchange: "NSE" },
+            { symbol: "MARUTI", name: "Maruti Suzuki India Ltd", exchange: "NSE" },
+            { symbol: "TITAN", name: "Titan Company Ltd", exchange: "NSE" },
+            { symbol: "SUNPHARMA", name: "Sun Pharmaceutical Industries Ltd", exchange: "NSE" },
+            { symbol: "BAJFINANCE", name: "Bajaj Finance Ltd", exchange: "NSE" },
+            { symbol: "ULTRACEMCO", name: "UltraTech Cement Ltd", exchange: "NSE" },
+            { symbol: "NESTLEIND", name: "Nestle India Ltd", exchange: "NSE" },
+            { symbol: "WIPRO", name: "Wipro Ltd", exchange: "NSE" },
+            { symbol: "TECHM", name: "Tech Mahindra Ltd", exchange: "NSE" },
+            { symbol: "HCLTECH", name: "HCL Technologies Ltd", exchange: "NSE" },
+            { symbol: "POWERGRID", name: "Power Grid Corporation of India Ltd", exchange: "NSE" },
+            { symbol: "NTPC", name: "NTPC Ltd", exchange: "NSE" },
+            { symbol: "ONGC", name: "Oil & Natural Gas Corporation Ltd", exchange: "NSE" },
+            { symbol: "M&M", name: "Mahindra & Mahindra Ltd", exchange: "NSE" },
+            { symbol: "TATAMOTORS", name: "Tata Motors Ltd", exchange: "NSE" },
+            { symbol: "TATASTEEL", name: "Tata Steel Ltd", exchange: "NSE" },
+            { symbol: "BAJAJFINSV", name: "Bajaj Finserv Ltd", exchange: "NSE" },
+            { symbol: "HDFCLIFE", name: "HDFC Life Insurance Company Ltd", exchange: "NSE" },
+            { symbol: "SBILIFE", name: "SBI Life Insurance Company Ltd", exchange: "NSE" },
+            { symbol: "ADANIENT", name: "Adani Enterprises Ltd", exchange: "NSE" },
+            { symbol: "ADANIPORTS", name: "Adani Ports and Special Economic Zone Ltd", exchange: "NSE" },
+            { symbol: "JSWSTEEL", name: "JSW Steel Ltd", exchange: "NSE" },
+            { symbol: "INDUSINDBK", name: "IndusInd Bank Ltd", exchange: "NSE" },
+            { symbol: "DIVISLAB", name: "Divi's Laboratories Ltd", exchange: "NSE" },
+            { symbol: "DRREDDY", name: "Dr. Reddy's Laboratories Ltd", exchange: "NSE" },
+            { symbol: "CIPLA", name: "Cipla Ltd", exchange: "NSE" },
+            { symbol: "BRITANNIA", name: "Britannia Industries Ltd", exchange: "NSE" },
+            { symbol: "APOLLOHOSP", name: "Apollo Hospitals Enterprise Ltd", exchange: "NSE" },
+            { symbol: "EICHERMOT", name: "Eicher Motors Ltd", exchange: "NSE" },
+            { symbol: "COALINDIA", name: "Coal India Ltd", exchange: "NSE" },
+            { symbol: "HINDALCO", name: "Hindalco Industries Ltd", exchange: "NSE" },
+            { symbol: "BPCL", name: "Bharat Petroleum Corporation Ltd", exchange: "NSE" },
+            { symbol: "GRASIM", name: "Grasim Industries Ltd", exchange: "NSE" },
+            { symbol: "HEROMOTOCO", name: "Hero MotoCorp Ltd", exchange: "NSE" },
+            { symbol: "SHREECEM", name: "Shree Cement Ltd", exchange: "NSE" },
+            { symbol: "TATACONSUM", name: "Tata Consumer Products Ltd", exchange: "NSE" },
+            { symbol: "BAJAJ-AUTO", name: "Bajaj Auto Ltd", exchange: "NSE" },
+            { symbol: "UPL", name: "UPL Ltd", exchange: "NSE" },
+            { symbol: "VEDL", name: "Vedanta Ltd", exchange: "NSE" },
+            { symbol: "ZOMATO", name: "Zomato Ltd", exchange: "NSE" },
+            { symbol: "PAYTM", name: "One 97 Communications Ltd", exchange: "NSE" },
+            { symbol: "NYKAA", name: "FSN E-Commerce Ventures Ltd", exchange: "NSE" },
+            { symbol: "PNB", name: "Punjab National Bank", exchange: "NSE" },
+            { symbol: "BANKBARODA", name: "Bank of Baroda", exchange: "NSE" },
+            { symbol: "CANBK", name: "Canara Bank", exchange: "NSE" },
+            { symbol: "IRCTC", name: "Indian Railway Catering and Tourism Corporation Ltd", exchange: "NSE" },
+            { symbol: "YESBANK", name: "Yes Bank Ltd", exchange: "NSE" },
+            { symbol: "FEDERALBNK", name: "Federal Bank Ltd", exchange: "NSE" },
+            { symbol: "SUZLON", name: "Suzlon Energy Ltd", exchange: "NSE" },
+            { symbol: "ADANIPOWER", name: "Adani Power Ltd", exchange: "NSE" },
+            { symbol: "TATAPOWER", name: "Tata Power Company Ltd", exchange: "NSE" },
+            { symbol: "DMART", name: "Avenue Supermarts Ltd", exchange: "NSE" },
+            { symbol: "PIDILITIND", name: "Pidilite Industries Ltd", exchange: "NSE" },
+            { symbol: "GODREJCP", name: "Godrej Consumer Products Ltd", exchange: "NSE" },
+            { symbol: "MARICO", name: "Marico Ltd", exchange: "NSE" },
+            { symbol: "DABUR", name: "Dabur India Ltd", exchange: "NSE" },
+            { symbol: "HAVELLS", name: "Havells India Ltd", exchange: "NSE" },
+            { symbol: "DIXON", name: "Dixon Technologies (India) Ltd", exchange: "NSE" },
+            { symbol: "TRENT", name: "Trent Ltd", exchange: "NSE" },
+        ];
+        
+        let trades = [];
+        let selectedStock = null;
+        
+        function init() {
+            loadData();
+            setTodayDate();
+            updateLastUpdate();
+        }
+        
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entryDate').value = today;
+        }
+        
+        function loadData() {
+            const saved = localStorage.getItem('portfolioTrades');
+            if (saved) {
+                trades = JSON.parse(saved);
+                renderTrades();
+            } else {
+                showEmptyState();
+            }
+        }
+        
+        function saveData() {
+            localStorage.setItem('portfolioTrades', JSON.stringify(trades));
+            localStorage.setItem('lastUpdate', new Date().toISOString());
+            updateLastUpdate();
+        }
+        
+        function updateLastUpdate() {
+            const lastUpdate = localStorage.getItem('lastUpdate');
+            if (lastUpdate) {
+                const date = new Date(lastUpdate);
+                document.getElementById('lastUpdate').textContent = date.toLocaleString();
+            }
+        }
+        
+        function searchSymbol() {
+            const input = document.getElementById('symbol').value.toUpperCase();
+            const results = document.getElementById('autocompleteResults');
+            
+            if (input.length < 1) {
+                results.classList.remove('active');
+                return;
+            }
+            
+            const filtered = STOCK_DATABASE.filter(stock => 
+                stock.symbol.includes(input) || 
+                stock.name.toUpperCase().includes(input)
+            ).slice(0, 10);
+            
+            if (filtered.length > 0) {
+                results.innerHTML = filtered.map(stock => `
+                    <div class="autocomplete-item" onclick="selectStock('${stock.symbol}', '${stock.exchange}', '${stock.name.replace(/'/g, "\\'")}')">
+                        <span class="autocomplete-item-symbol">${stock.symbol}</span>
+                        <span class="exchange-badge ${stock.exchange}">${stock.exchange}</span>
+                        <span class="autocomplete-item-name">${stock.name}</span>
+                    </div>
+                `).join('');
+                results.classList.add('active');
+            } else {
+                results.classList.remove('active');
+            }
+        }
+        
+        function selectStock(symbol, exchange, name) {
+            document.getElementById('symbol').value = symbol;
+            document.getElementById('exchange').value = exchange;
+            document.getElementById('autocompleteResults').classList.remove('active');
+            selectedStock = { symbol, exchange, name };
+        }
+        
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+            selectedStock = null;
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            document.getElementById('tradeForm').reset();
+            document.getElementById('autocompleteResults').classList.remove('active');
+            setTodayDate();
+        }
+        
+        function addTrade(event) {
+            event.preventDefault();
+            
+            const symbol = document.getElementById('symbol').value.toUpperCase();
+            const exchange = document.getElementById('exchange').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+            const entryDate = document.getElementById('entryDate').value;
+            const exitPrice = document.getElementById('exitPrice').value ? parseFloat(document.getElementById('exitPrice').value) : null;
+            const exitDate = document.getElementById('exitDate').value || null;
+            const notes = document.getElementById('notes').value;
+            
+            const stockInfo = STOCK_DATABASE.find(s => s.symbol === symbol && s.exchange === exchange) || selectedStock;
+            
+            const trade = {
+                id: Date.now(),
+                symbol,
+                name: stockInfo ? stockInfo.name : symbol,
+                exchange,
+                quantity,
+                entryPrice,
+                entryDate,
+                exitPrice,
+                exitDate,
+                notes,
+                addedDate: new Date().toISOString()
+            };
+            
+            trades.unshift(trade);
+            saveData();
+            renderTrades();
+            closeModal();
+        }
+        
+        function calculateMetrics(trade) {
+            const investment = trade.quantity * trade.entryPrice;
+            const currentReturn = trade.exitPrice ? (trade.quantity * trade.exitPrice) : 0;
+            const pnl = trade.exitPrice ? (currentReturn - investment) : 0;
+            const pnlPercent = trade.exitPrice ? ((pnl / investment) * 100) : 0;
+            
+            let daysHeld = 0;
+            if (trade.exitDate) {
+                const entry = new Date(trade.entryDate);
+                const exit = new Date(trade.exitDate);
+                daysHeld = Math.floor((exit - entry) / (1000 * 60 * 60 * 24));
+            } else {
+                const entry = new Date(trade.entryDate);
+                const today = new Date();
+                daysHeld = Math.floor((today - entry) / (1000 * 60 * 60 * 24));
+            }
+            
+            return { investment, currentReturn, pnl, pnlPercent, daysHeld };
+        }
+        
+        function renderTrades() {
+            const tbody = document.getElementById('tradesBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (trades.length === 0) {
+                tbody.innerHTML = '';
+                document.querySelector('.table-container').style.display = 'none';
+                emptyState.style.display = 'block';
+                updateStats();
+                return;
+            }
+            
+            document.querySelector('.table-container').style.display = 'block';
+            emptyState.style.display = 'none';
+            
+            tbody.innerHTML = trades.map(trade => {
+                const metrics = calculateMetrics(trade);
+                const status = trade.exitPrice ? 'CLOSED' : 'ACTIVE';
+                const statusClass = trade.exitPrice ? 'neutral' : 'positive';
+                const pnlClass = metrics.pnl > 0 ? 'positive' : metrics.pnl < 0 ? 'negative' : 'neutral';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="stock-symbol">${trade.symbol}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">${trade.name}</div>
+                        </td>
+                        <td><span class="exchange-badge ${trade.exchange}">${trade.exchange}</span></td>
+                        <td>₹${trade.entryPrice.toFixed(2)}</td>
+                        <td>${formatDate(trade.entryDate)}</td>
+                        <td>${trade.exitPrice ? '₹' + trade.exitPrice.toFixed(2) : '-'}</td>
+                        <td>${trade.exitDate ? formatDate(trade.exitDate) : '-'}</td>
+                        <td>${trade.quantity.toLocaleString()}</td>
+                        <td>₹${metrics.investment.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${trade.exitPrice ? '₹' + metrics.currentReturn.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-'}</td>
+                        <td class="${pnlClass}">${trade.exitPrice ? (metrics.pnl >= 0 ? '+' : '') + '₹' + metrics.pnl.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-'}</td>
+                        <td class="${pnlClass}">${trade.exitPrice ? (metrics.pnlPercent >= 0 ? '+' : '') + metrics.pnlPercent.toFixed(2) + '%' : '-'}</td>
+                        <td><span class="metric-badge days-held">${metrics.daysHeld}d</span></td>
+                        <td><span class="${statusClass}" style="font-weight: 600;">${status}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-small" onclick="editTrade(${trade.id})">EDIT</button>
+                                <button class="btn btn-small btn-danger" onclick="deleteTrade(${trade.id})">DEL</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            const active = trades.filter(t => !t.exitPrice).length;
+            const closed = trades.filter(t => t.exitPrice).length;
+            
+            let totalPnL = 0;
+            trades.forEach(trade => {
+                if (trade.exitPrice) {
+                    const metrics = calculateMetrics(trade);
+                    totalPnL += metrics.pnl;
+                }
+            });
+            
+            document.getElementById('totalTrades').textContent = trades.length;
+            document.getElementById('activeTrades').textContent = active;
+            document.getElementById('closedTrades').textContent = closed;
+            
+            const pnlElement = document.getElementById('totalPnL');
+            pnlElement.textContent = '₹' + totalPnL.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            pnlElement.className = 'stat-value ' + (totalPnL >= 0 ? 'positive' : 'negative');
+        }
+        
+        function editTrade(id) {
+            const trade = trades.find(t => t.id === id);
+            if (!trade) return;
+            
+            document.getElementById('symbol').value = trade.symbol;
+            document.getElementById('exchange').value = trade.exchange;
+            document.getElementById('quantity').value = trade.quantity;
+            document.getElementById('entryPrice').value = trade.entryPrice;
+            document.getElementById('entryDate').value = trade.entryDate;
+            document.getElementById('exitPrice').value = trade.exitPrice || '';
+            document.getElementById('exitDate').value = trade.exitDate || '';
+            document.getElementById('notes').value = trade.notes || '';
+            
+            deleteTrade(id, true);
+            openModal();
+        }
+        
+        function deleteTrade(id, skipConfirm = false) {
+            if (skipConfirm || confirm('Delete this trade?')) {
+                trades = trades.filter(t => t.id !== id);
+                saveData();
+                renderTrades();
+            }
+        }
+        
+        function searchTable() {
+            const input = document.getElementById('searchTable').value.toUpperCase();
+            const rows = document.querySelectorAll('#tradesBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toUpperCase();
+                row.style.display = text.includes(input) ? '' : 'none';
+            });
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(trades, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `portfolio-trades-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function importData() {
+            document.getElementById('importInput').click();
+        }
+        
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data)) {
+                        if (confirm('Replace all current data?')) {
+                            trades = data;
+                            saveData();
+                            renderTrades();
+                            alert('Data imported successfully!');
+                        }
+                    } else {
+                        alert('Invalid data format!');
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function clearAll() {
+            if (confirm('Delete ALL trades? This cannot be undone!')) {
+                trades = [];
+                saveData();
+                renderTrades();
+            }
+        }
+        
+        function publishData() {
+            document.getElementById('publishTradeCount').textContent = trades.length;
+            document.getElementById('publishModal').classList.add('active');
+        }
+        
+        function closePublishModal() {
+            document.getElementById('publishModal').classList.remove('active');
+        }
+        
+        function generatePublishFile() {
+            const dataStr = `// Portfolio Data - Last Updated: ${new Date().toLocaleString()}
+const PORTFOLIO_DATA = ${JSON.stringify(trades, null, 2)};`;
+            
+            const blob = new Blob([dataStr], { type: 'application/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'portfolio-data.js';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('File downloaded! Upload portfolio-data.js to your GitHub repository.');
+            closePublishModal();
+        }
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        function showEmptyState() {
+            document.querySelector('.table-container').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+            updateStats();
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-container')) {
+                document.getElementById('autocompleteResults').classList.remove('active');
+            }
+        });
+        
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        document.getElementById('publishModal').addEventListener('click', function(e) {
+            if (e.target === this) closePublishModal();
+        });
+        
+        init();
+    </script>
+</body>
+</html>
